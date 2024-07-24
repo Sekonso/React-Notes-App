@@ -1,50 +1,71 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import * as localData from "../utils/local-data";
-import NoteCard from "../components/NoteCard";
+import { NotesList, NotesListSkeleton } from "../components/NotesList";
 import SearchField from "../components/SearchField";
+import { getArchivedNotes } from "../utils/notesAPI";
 
 const ArchivedPage = () => {
+  const [searchParams] = useSearchParams();
   const [notes, setNotes] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [filteredNotes, setFilteredNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState({ error: false, message: "" });
+  const [popupDisplay, setPopupDisplay] = useState({ status: "disable", message: "" });
+
+  async function fetchArchivedNotes() {
+    try {
+      setLoading(true);
+      setError({ error: false, message: "" });
+
+      const response = await getArchivedNotes();
+
+      if (response.status === "fail") throw new Error(response.message);
+
+      setNotes(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError({ error: true, message: error.message });
+      setLoading(false);
+    }
+  }
+
+  function filterNotes() {
+    if (!searchParams.get("title")) {
+      setFilteredNotes(notes);
+      return;
+    }
+
+    const filteredNotes = notes.filter((note) =>
+      note.title.toLowerCase().includes(searchParams.get("title").toLowerCase())
+    );
+
+    setFilteredNotes(filteredNotes);
+  }
 
   useEffect(() => {
-    if (!searchParams.get("title")) setNotes(localData.getArchivedNotes());
-    else setNotes(localData.searchArchivedNotes(searchParams.get("title").toLowerCase()));
-  }, [searchParams]);
+    fetchArchivedNotes();
 
-  function searchInputHandler(event) {
-    setSearchParams({ title: event.target.value });
-  }
+    addEventListener("refresh-notes", fetchArchivedNotes);
 
-  function deleteHandler(id) {
-    localData.deleteNote(id);
-    setNotes(localData.getArchivedNotes());
-  }
+    return () => {
+      removeEventListener("refresh-notes", fetchArchivedNotes);
+    };
+  }, []);
 
-  function unarchiveHandler(id) {
-    localData.unarchiveNote(id);
-    setNotes(localData.getArchivedNotes());
-  }
+  useEffect(() => {
+    filterNotes();
+  }, [notes, searchParams]);
+
+  // RENDER
+  if (error.error) return <h2>{error.message}</h2>;
 
   return (
     <>
-      <SearchField onInput={searchInputHandler} />
+      <SearchField />
 
-      {notes.length === 0 ? (
-        <h2>There are no notes...</h2>
-      ) : (
-        <div className="notes-list">
-          {notes.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              onDelete={deleteHandler}
-              onUnarchive={unarchiveHandler}
-            />
-          ))}
-        </div>
-      )}
+      {loading ? <NotesListSkeleton /> : <NotesList notes={filteredNotes} />}
     </>
   );
 };

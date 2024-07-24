@@ -9,14 +9,22 @@ Proyek dikerjakan dengan tools:
 
 Dengan kriteria:
 
-- Menampilkan daftar catatan
-- Membuat halaman khusus untuk detail catatan
-- Membuat halaman khusus untuk tambah catatan
+- Memanfaatkan RESTful API sebagai sumber data
+- Autentikasi pengguna dan proteksi fitur catatan
+- Fitur pengubah tema
+- Menggunakan hooks
+- Menampilkan halaman untuk daftar, detail, dan penambahan catatan
 - Terdapat tombol menghapus catatan
 - Validasi data type properties pada React Component
-- Fitur halaman dan tombol arsip (Opsional)
+- Menambahkan halaman dan fitur arsip (opsional)
 - Fitur pencarian catatan (opsional)
-- Menampilkan halaman 404 untuk url yang tidak valid
+- Menampilkan halaman 404 untuk url yang tidak valid (opsional)
+- Indikator loading (opsional)
+- Fitur ubah bahasa (opsional)
+
+## Live Site
+
+[Quick notes app](https://react-notes-skns.netlify.app/)
 
 ## Installation
 

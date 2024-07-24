@@ -1,9 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { FaSearch } from "react-icons/fa";
+import useSearchFilter from "../hooks/useSearchFilter";
+import { useLocale } from "../contexts/LocaleContext";
 
-const SearchField = (props) => {
-  const { title, onInput } = props;
+const SearchField = () => {
+  const [title, titleChangeHandler] = useSearchFilter();
+  const { locale } = useLocale();
 
   return (
     <div className="search-field">
@@ -14,16 +16,11 @@ const SearchField = (props) => {
         type="search"
         id="search-input"
         value={title}
-        placeholder="Search note..."
-        onInput={onInput}
+        placeholder={locale === "en" ? "Search note..." : "Cari catatan..."}
+        onInput={titleChangeHandler}
       ></input>
     </div>
   );
-};
-
-SearchField.propTypes = {
-  title: PropTypes.string,
-  onInput: PropTypes.func.isRequired,
 };
 
 export default SearchField;

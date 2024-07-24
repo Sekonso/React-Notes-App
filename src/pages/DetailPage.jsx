@@ -1,38 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import * as localData from "../utils/local-data";
 import { showFormattedDate } from "../utils";
-import { FaTrash, FaBoxArchive, FaPenToSquare } from "react-icons/fa6";
+import { FaTrash, FaBoxArchive } from "react-icons/fa6";
 import { RiInboxUnarchiveFill } from "react-icons/ri";
-import NotFoundPage from "../pages/NotFoundPage";
+import { getNote, archiveNote, unarchiveNote, deleteNote } from "../utils/notesAPI";
 
 const DetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState(localData.getNote(id));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState({ error: false, message: "" });
+  const [archiveLoading, setArchiveLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
-  function deleteHandler() {
-    localData.deleteNote(id);
-    navigate("/");
+  async function fetchNote() {
+    try {
+      setLoading(true);
+      setError({ error: false, message: "" });
+
+      const response = await getNote(id);
+
+      if (response.status === "fail") throw new Error(response.message);
+
+      setNote(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError({ error: true, message: error.message });
+      setLoading(false);
+    }
   }
 
-  function archiveHandler() {
-    localData.archiveNote(id);
-    setNote(localData.getNote(id));
+  async function archiveHandler() {
+    try {
+      setArchiveLoading(true);
+
+      const response = await archiveNote(id);
+
+      if (response.status === "fail") throw new Error(response.message);
+
+      setArchiveLoading(false);
+      fetchNote();
+    } catch (error) {
+      console.error(error);
+      setArchiveLoading(false);
+      window.alert(error.message);
+    }
   }
 
-  function unarchiveHandler() {
-    localData.unarchiveNote(id);
-    setNote(localData.getNote(id));
+  async function unarchiveHandler() {
+    try {
+      setArchiveLoading(true);
+
+      const response = await unarchiveNote(id);
+
+      if (response.status === "fail") throw new Error(response.message);
+
+      setArchiveLoading(false);
+      fetchNote();
+    } catch (error) {
+      console.error(error);
+      setArchiveLoading(false);
+      window.alert(error.message);
+    }
   }
 
-  function editHandler() {
-    navigate(`/edit/${id}`);
+  async function deleteHandler() {
+    try {
+      setDeleteLoading(true);
+
+      const response = await deleteNote(id);
+
+      if (response.status === "fail") throw new Error(response.message);
+
+      setDeleteLoading(false);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      setDeleteLoading(false);
+      window.alert(error.message);
+    }
   }
 
-  if (!note) {
-    return <NotFoundPage />;
-  }
+  useEffect(() => {
+    fetchNote();
+  }, []);
+
+  // RENDER
+  if (loading) return <Skeleton />;
+
+  if (error.error === true) return <div>{error.message}</div>;
 
   return (
     <div className="note-detail">
@@ -43,26 +102,31 @@ const DetailPage = () => {
       </div>
 
       <div className="note-detail-buttons">
-        <button className="button" onClick={editHandler}>
-          <FaPenToSquare />
-        </button>
-
-        {!note.archived && (
+        {/* Archive/unarchive */}
+        {!note.archived ? (
           <button className="button" onClick={archiveHandler}>
-            <FaBoxArchive />
+            {archiveLoading ? <div className="spinning-load"></div> : <FaBoxArchive />}
           </button>
-        )}
-
-        {note.archived && (
+        ) : (
           <button className="button" onClick={unarchiveHandler}>
-            <RiInboxUnarchiveFill />
+            {archiveLoading ? <div className="spinning-load"></div> : <RiInboxUnarchiveFill />}
           </button>
         )}
 
+        {/* Delete */}
         <button className="button danger" onClick={deleteHandler}>
-          <FaTrash />
+          {deleteLoading ? <div className="spinning-load"></div> : <FaTrash />}
         </button>
       </div>
+    </div>
+  );
+};
+
+const Skeleton = () => {
+  return (
+    <div className="note-detail">
+      <div className="note-detail-skeleton-upper skeleton-load"></div>
+      <div className="note-detail-skeleton-lower skeleton-load"></div>
     </div>
   );
 };

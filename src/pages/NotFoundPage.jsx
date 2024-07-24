@@ -1,7 +1,15 @@
 import React from "react";
+import { useLocale } from "../contexts/LocaleContext";
 
 const NotFoundPage = () => {
-  return <h1>404 - PAGE NOT FOUND</h1>;
+  const { locale } = useLocale();
+
+  return (
+    <div className="fullscreen">
+      <h1>404</h1>
+      <h1>{locale === "en" ? "PAGE NOT FOUND" : "HALAMAN TIDAK DITEMUKAN"}</h1>
+    </div>
+  );
 };
 
 export default NotFoundPage;

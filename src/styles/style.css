@@ -1,8 +1,18 @@
 :root {
-  --light-blue: #494c6f;
-  --dark-blue: #222433;
-  --darker-blue: #1d1e27;
+  --background-color: white;
+  --section-color: #ccc;
+  --element-color: black;
+  --text-color: black;
+  --text-color-2: white;
   --red: #7e1f24;
+}
+
+[data-theme="dark"] {
+  --background-color: #222433;
+  --section-color: #1d1e27;
+  --element-color: #494c6f;
+  --text-color: white;
+  --text-color-2: white;
 }
 
 * {
@@ -13,9 +23,10 @@
 }
 
 body {
+  min-height: 100vh;
   padding: 2rem 1.2rem;
-  background: var(--dark-blue);
-  color: white;
+  background: var(--background-color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,13 +41,27 @@ a {
   color: inherit;
 }
 
+input,
+textarea {
+  color: inherit;
+}
+
+.fullscreen {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Utilities */
 .button {
-  background: var(--light-blue);
-  color: white;
+  font-size: 1rem;
+  background: var(--element-color);
+  color: var(--text-color-2);
   border: none;
   border-radius: 7px;
-  padding: 0.7rem 1rem;
+  padding: 0.7em 1rem;
 }
 .button:hover {
   cursor: pointer;
@@ -47,6 +72,14 @@ a {
   background: var(--red);
 }
 
+.txt-blue {
+  color: blue;
+}
+
+.theme-toggler {
+  background: var(--element-color);
+}
+
 /* Header */
 .navbar {
   display: flex;
@@ -54,7 +87,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 .nav-links {
@@ -65,7 +98,7 @@ a {
 
 /* Main */
 .search-field {
-  background: var(--darker-blue);
+  background: var(--section-color);
   padding: 1rem;
   border-radius: 7px;
   display: flex;
@@ -74,7 +107,6 @@ a {
 }
 .search-field input {
   background: none;
-  color: white;
   width: 100%;
   outline: none;
   border: none;
@@ -88,7 +120,7 @@ a {
 }
 
 .note-card {
-  background: var(--darker-blue);
+  background: var(--section-color);
   padding: 1.2rem 1rem;
   border-radius: 7px;
 }
@@ -99,7 +131,6 @@ a {
 }
 .note-card-date {
   font-size: 0.9rem;
-  color: #ccc;
   margin-bottom: 1rem;
 }
 .note-card-body {
@@ -115,11 +146,34 @@ a {
   width: 100%;
 }
 
+.note-card-skeleton {
+  background: var(--section-color);
+  border-radius: 7px;
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+}
+.note-card-skeleton-content {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+}
+.note-card-skeleton-buttons {
+  display: flex;
+  gap: 1rem;
+}
+.note-card-skeleton-buttons div {
+  border-radius: 5px;
+  width: 100%;
+  height: 50px;
+}
+
 /* Note Detail */
 .note-detail {
-  background: var(--darker-blue);
-  margin-top: 2rem;
+  background: var(--section-color);
   padding: 1rem;
+  border-radius: 7px;
 }
 
 .note-detail-title {
@@ -127,7 +181,6 @@ a {
 }
 .note-detail-date {
   font-size: 0.9rem;
-  color: #ccc;
   margin-bottom: 1rem;
 }
 .note-detail-body {
@@ -136,7 +189,7 @@ a {
 
 .note-detail-buttons {
   position: fixed;
-  background: var(--darker-blue);
+  background: var(--section-color);
   display: flex;
   gap: 0.8rem;
   padding: 1rem;
@@ -144,6 +197,18 @@ a {
   z-index: 1000;
   right: 2rem;
   bottom: 2rem;
+}
+
+.note-detail-skeleton-upper {
+  width: 100%;
+  height: 35px;
+  border-radius: 5px;
+}
+.note-detail-skeleton-lower {
+  width: 100%;
+  height: 75px;
+  margin-top: 1rem;
+  border-radius: 5px;
 }
 
 /* Note form */
@@ -164,8 +229,7 @@ a {
 .note-form input,
 .note-form textarea {
   font-size: 1rem;
-  background: var(--darker-blue);
-  color: white;
+  background: var(--section-color);
   width: 100%;
   padding: 1rem;
   border: none;
@@ -176,16 +240,103 @@ a {
   height: 200px;
 }
 
-.input-limit {
-  display: block;
-  float: right;
-  padding-right: 0.3rem;
-  margin-top: 0.5rem;
+.note-form-message {
   font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+/* Authentication */
+.auth-page {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-form {
+  background: var(--section-color);
+  width: 300px;
+  padding: 1rem;
+  border-radius: 7px;
+}
+
+.auth-form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form-control {
+  margin-bottom: 1.5rem;
+}
+.auth-form-control label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.auth-form-control input {
+  font-size: 1rem;
+  background: var(--section-color);
+  width: 100%;
+  padding: 0.3rem 0;
+  border: none;
+  border-bottom: 1px solid white;
+  outline: none;
+}
+
+.auth-form-message {
+  color: var(--text-color-2);
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+.auth-form-submit {
+  width: 100%;
+  margin-top: 1rem;
 }
 
 @media (min-width: 600px) {
   body #root {
     min-width: 600px;
+  }
+}
+
+/* Animation */
+.skeleton-load {
+  animation: skeleton-load 1.5s infinite;
+}
+@keyframes skeleton-load {
+  0% {
+    background: #e9e7e7;
+  }
+  50% {
+    background: #817f7f;
+  }
+  100% {
+    background: #e9e7e7;
+  }
+}
+
+.spinning-load {
+  display: inline-block;
+}
+.spinning-load:after {
+  content: " ";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  border-color: currentColor transparent currentColor transparent;
+  animation: spinning-load 1.2s linear infinite;
+}
+@keyframes spinning-load {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
